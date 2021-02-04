@@ -12,8 +12,9 @@ BOARDNAME:=MIPS pistachio
 FEATURES:=fpu usb usbgadget squashfs targz nand
 CPU_TYPE:=24kc
 CPU_SUBTYPE:=24kf
+MAINTAINER:=
 
-KERNEL_PATCHVER:=5.4
+KERNEL_PATCHVER:=4.14
 
 include $(INCLUDE_DIR)/target.mk
 

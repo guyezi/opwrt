@@ -2496,7 +2496,8 @@ ar8xxx_phy_read_status(struct phy_device *phydev)
 	struct switch_port_link link;
 
 	/* check for switch port link changes */
-	ar8xxx_check_link_states(priv);
+	if (phydev->state == PHY_CHANGELINK)
+		ar8xxx_check_link_states(priv);
 
 	if (phydev->mdio.addr != 0)
 		return genphy_read_status(phydev);
@@ -2636,12 +2637,13 @@ found:
 	priv->use_count++;
 
 	if (phydev->mdio.addr == 0) {
-		linkmode_zero(phydev->supported);
-		if (ar8xxx_has_gige(priv))
-			linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, phydev->supported);
-		else
-			linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT, phydev->supported);
-		linkmode_copy(phydev->advertising, phydev->supported);
+		if (ar8xxx_has_gige(priv)) {
+			phydev->supported = SUPPORTED_1000baseT_Full;
+			phydev->advertising = ADVERTISED_1000baseT_Full;
+		} else {
+			phydev->supported = SUPPORTED_100baseT_Full;
+			phydev->advertising = ADVERTISED_100baseT_Full;
+		}
 
 		if (priv->chip->config_at_probe) {
 			priv->phy = phydev;
@@ -2652,9 +2654,8 @@ found:
 		}
 	} else {
 		if (ar8xxx_has_gige(priv)) {
-			linkmode_zero(phydev->supported);
-			linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, phydev->supported);
-			linkmode_copy(phydev->advertising, phydev->supported);
+			phydev->supported |= SUPPORTED_1000baseT_Full;
+			phydev->advertising |= ADVERTISED_1000baseT_Full;
 		}
 		if (priv->chip->phy_rgmii_set)
 			priv->chip->phy_rgmii_set(priv, phydev);

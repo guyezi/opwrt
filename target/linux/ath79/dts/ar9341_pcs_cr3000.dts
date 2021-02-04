@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-
-#include "ar9341.dtsi"
+/dts-v1/;
 
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
+
+#include "ar9341.dtsi"
 
 / {
 	model = "PowerCloud Systems CR3000";
@@ -11,14 +12,15 @@
 
 	aliases {
 		serial0 = &uart;
-		led-boot = &led_power;
-		led-failsafe = &led_power;
-		led-running = &led_power;
-		led-upgrade = &led_power;
+		led-boot = &status;
+		led-failsafe = &status;
+		led-running = &status;
+		led-upgrade = &status;
 	};
 
 	keys {
-		compatible = "gpio-keys";
+		compatible = "gpio-keys-polled";
+		poll-interval = <20>;
 
 		pinctrl-names = "default";
 		pinctrl-0 = <&jtag_disable_pins>;
@@ -41,40 +43,40 @@
 	leds {
 		compatible = "gpio-leds";
 
-		led_power: power {
-			label = "amber:power";
+		status: power {
+			label = "pcs:amber:power";
 			gpios = <&gpio 15 GPIO_ACTIVE_LOW>;
 			default-state = "on";
 		};
 
 		wlan2g {
-			label = "blue:wlan";
+			label = "pcs:blue:wlan";
 			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
 			linux,default-trigger = "phy0tpt";
 		};
 
 		wan {
-			label = "blue:wan";
+			label = "pcs:blue:wan";
 			gpios = <&gpio 18 GPIO_ACTIVE_LOW>;
 		};
 
 		lan1 {
-			label = "blue:lan1";
+			label = "pcs:blue:lan1";
 			gpios = <&gpio 19 GPIO_ACTIVE_LOW>;
 		};
 
 		lan2 {
-			label = "blue:lan2";
+			label = "pcs:blue:lan2";
 			gpios = <&gpio 20 GPIO_ACTIVE_LOW>;
 		};
 
 		lan3 {
-			label = "blue:lan3";
+			label = "pcs:blue:lan3";
 			gpios = <&gpio 21 GPIO_ACTIVE_LOW>;
 		};
 
 		lan4 {
-			label = "blue:lan4";
+			label = "pcs:blue:lan4";
 			gpios = <&gpio 22 GPIO_ACTIVE_LOW>;
 		};
 	};
@@ -88,7 +90,13 @@
 	status = "okay";
 };
 
+&gpio {
+	status = "okay";
+};
+
 &spi {
+	num-cs = <1>;
+
 	status = "okay";
 
 	flash@0 {
@@ -132,6 +140,7 @@
 	status = "okay";
 
 	mtd-cal-data = <&art 0x1000>;
+	mtd-mac-address = <&art 0x1002>;
 };
 
 &eth0 {
@@ -143,10 +152,12 @@
 };
 
 &eth1 {
-	phy-handle = <&swphy4>;
-	pll-data = <0x06000000 0x00000101 0x00001616>;
+	status = "okay";
 
+	phy-handle = <&swphy4>;
 	mtd-mac-address = <&art 0x0>;
+	phy-mode = "gmii";
+	pll-data = <0x06000000 0x00000101 0x00001616>;
 
 	gmac-config {
 		device = <&gmac>;

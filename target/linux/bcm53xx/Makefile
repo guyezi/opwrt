@@ -9,12 +9,11 @@ include $(TOPDIR)/rules.mk
 ARCH:=arm
 BOARD:=bcm53xx
 BOARDNAME:=Broadcom BCM47xx/53xx (ARM)
-FEATURES:=squashfs nand usb pci pcie gpio pwm
+FEATURES:=squashfs nand usb pci pcie gpio
+MAINTAINER:=Hauke Mehrtens <hauke@hauke-m.de>
 CPU_TYPE:=cortex-a9
-SUBTARGETS:=generic
 
-KERNEL_PATCHVER:=5.4
-KERNEL_TESTING_PATCHVER:=5.4
+KERNEL_PATCHVER:=4.14
 
 define Target/Description
 	Build firmware images for Broadcom based BCM47xx/53xx routers with ARM CPU, *not* MIPS.
@@ -27,6 +26,6 @@ KERNELNAME:=zImage dtbs
 DEFAULT_PACKAGES += swconfig nvram \
 	osafeloader oseama otrx \
 	kmod-gpio-button-hotplug \
-	kmod-leds-gpio
+	kmod-leds-gpio kmod-ledtrig-default-on kmod-ledtrig-timer
 
 $(eval $(call BuildTarget))

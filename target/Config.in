@@ -29,9 +29,6 @@ config PCIE_SUPPORT
 config PCMCIA_SUPPORT
 	bool
 
-config PWM_SUPPORT
-	bool
-
 config USB_SUPPORT
 	select AUDIO_SUPPORT
 	bool
@@ -40,7 +37,8 @@ config USB_GADGET_SUPPORT
 	bool
 
 config RTC_SUPPORT
-	bool
+	tristate
+	depends on m
 
 config BIG_ENDIAN
 	bool

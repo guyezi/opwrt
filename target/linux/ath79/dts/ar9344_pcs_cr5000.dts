@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-
-#include "ar9344.dtsi"
+/dts-v1/;
 
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
+
+#include "ar9344.dtsi"
 
 / {
 	model = "PowerCloud Systems CR5000";
@@ -11,14 +12,15 @@
 
 	aliases {
 		serial0 = &uart;
-		led-boot = &led_power;
-		led-failsafe = &led_power;
-		led-running = &led_power;
-		led-upgrade = &led_power;
+		led-boot = &status;
+		led-failsafe = &status;
+		led-running = &status;
+		led-upgrade = &status;
 	};
 
 	keys {
-		compatible = "gpio-keys";
+		compatible = "gpio-keys-polled";
+		poll-interval = <20>;
 
 		pinctrl-names = "default";
 		pinctrl-0 = <&jtag_disable_pins>;
@@ -41,21 +43,21 @@
 	leds {
 		compatible = "gpio-leds";
 
-		led_power: power {
-			label = "amber:power";
+		status: power {
+			label = "pcs:amber:power";
 			gpios = <&gpio 2 GPIO_ACTIVE_LOW>,
 				<&gpio 4 GPIO_ACTIVE_LOW>;
 			default-state = "on";
 		};
 
 		wlan2g {
-			label = "blue:wlan";
+			label = "pcs:blue:wlan";
 			gpios = <&gpio 14 GPIO_ACTIVE_LOW>;
 			linux,default-trigger = "phy0tpt";
 		};
 
 		wps_white {
-			label = "white:wps";
+			label = "pcs:white:wps";
 			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
 		};
 	};
@@ -69,7 +71,13 @@
 	status = "okay";
 };
 
+&gpio {
+	status = "okay";
+};
+
 &spi {
+	num-cs = <1>;
+
 	status = "okay";
 
 	flash@0 {
@@ -169,6 +177,7 @@
 	phy-mode = "rgmii";
 	phy-handle = <&phy0>;
 
+
 	aliases {
 		ag0 = &eth1;
 	};
@@ -213,4 +222,5 @@
 	status = "okay";
 
 	mtd-cal-data = <&art 0x1000>;
+	mtd-mac-address = <&art 0x1002>;
 };
